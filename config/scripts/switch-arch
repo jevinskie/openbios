@@ -114,7 +114,12 @@ archname()
 select_prefix()
 {
     BASEARCH=$(basearch $ARCH)
-    for target_arch ; do
+    if [ x"$BASEARCH" = "xamd64" ]; then
+        target_archs="amd64 x86_64";
+    else
+        target_archs=$BASEARCH
+    fi
+    for target_arch in $target_archs; do
         TARGETS="${target_arch}-unknown-linux-gnu- ${target_arch}-linux-gnu- ${target_arch}-linux- ${target_arch}-elf- ${target_arch}-eabi-"
 
         if [ x"$CROSS_COMPILE" != "x" ]; then

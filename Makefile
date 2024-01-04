@@ -12,13 +12,13 @@ info:
 clean:
 	@echo "Cleaning up..."
 	@for dir in $(ODIRS); do \
-		$(MAKE) -C $$dir clean; \
+		$(MAKE) $(MAKEFLAGS) -C $$dir clean; \
 	done
 
 build: start-build
 	@echo ODIR: $(ODIR) ODIRS: $(ODIRS)
 	@for dir in $(ODIRS); do \
-		$(MAKE) -C $$dir > $$dir/build.log 2>&1 && echo "ok." || \
+		$(MAKE) $(MAKEFLAGS) -C $$dir > $$dir/build.log 2>&1 && echo "ok." || \
 		( echo "error:"; tail -15 $$dir/build.log; exit 1 ) \
 	done
 
@@ -30,7 +30,7 @@ quiet-command = $(if $(V),$1,$(if $(2),@echo $2 && $1, @$1))
 build-verbose: start-build $(SUBDIR_RULES)
 
 subdir-%:
-	$(call quiet-command,$(MAKE) $(SUBDIR_MAKEFLAGS) -C obj-$* V="$(V)" all,)
+	$(call quiet-command,$(MAKE) $(MAKEFLAGS) $(SUBDIR_MAKEFLAGS) -C obj-$* V="$(V)" all,)
 
 start-build:
 	@echo "Building..."
