@@ -56,6 +56,8 @@ static uint8_t image_stack[IMAGE_STACK_SIZE];
 /* Pointer to startup context (physical address) */
 unsigned long __boot_ctx;
 
+extern int openbios(void);
+
 /*
  * Main starter
  * This is the C function that runs first.
@@ -63,7 +65,6 @@ unsigned long __boot_ctx;
 static void start_main(void)
 {
     int retval;
-    extern int openbios(void);
 
     /* Save startup context, so we can refer to it later.
      * We have to keep it in physical address since we will relocate. */

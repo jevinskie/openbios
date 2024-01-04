@@ -44,7 +44,7 @@ run:
 
 # The following two targets will only work on x86 so far.
 #
-obj-x86/openbios.iso: $(ODIR)/openbios.multiboot obj-x86/openbios-x86.dict
+obj-x86/openbios.iso: obj-x86/openbios.multiboot obj-x86/openbios-x86.dict
 	@mkisofs -input-charset UTF-8 -r -b boot/grub/stage2_eltorito -no-emul-boot \
 	-boot-load-size 4 -boot-info-table -o $@ utils/iso $^
 

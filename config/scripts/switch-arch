@@ -116,8 +116,10 @@ select_prefix()
     BASEARCH=$(basearch $ARCH)
     if [ x"$BASEARCH" = "xamd64" ]; then
         target_archs="amd64 x86_64";
+    elif [ x"$BASEARCH" = "xx86" ]; then
+        target_archs="i486 i686";
     else
-        target_archs=$BASEARCH
+        target_archs=$BASEARCH;
     fi
     for target_arch in $target_archs; do
         TARGETS="${target_arch}-unknown-linux-gnu- ${target_arch}-linux-gnu- ${target_arch}-linux- ${target_arch}-elf- ${target_arch}-eabi-"
@@ -305,7 +307,7 @@ for ARCH in $arch_list; do
         ;;
 
         x86)
-        select_prefix i486 x86_64
+        select_prefix i486 i686 x86_64
         CFLAGS="-fno-builtin -m32"
         AS_FLAGS="-Wa,-32"
         ;;

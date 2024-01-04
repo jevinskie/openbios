@@ -39,11 +39,11 @@ static void init_memory(void)
 extern int ob_ide_init(const char *path, uint32_t io_port0, uint32_t ctl_port0,
                 uint32_t io_port1, uint32_t ctl_port1);
 
+extern void setup_timers(void);
+
 static void
 arch_init( void )
 {
-	void setup_timers(void);
-
 	openbios_init();
 	modules_init();
 #ifdef CONFIG_DRIVER_IDE
