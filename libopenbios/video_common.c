@@ -185,7 +185,7 @@ video_fill_rect(void)
 	}
 }
 
-void setup_video()
+void setup_video(void)
 {
 	/* Make everything inside the video_info structure point to the
 	   values in the Forth dictionary. Hence everything is always in

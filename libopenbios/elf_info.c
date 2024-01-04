@@ -28,7 +28,12 @@ struct elf_image_note {
 };
 
 const struct elf_image_note elf_image_notes
-	__attribute__ ((section (".note.ELFBoot"))) =
+#ifndef __APPLE__
+	__attribute__ ((section (".note.ELFBoot")))
+#else
+	__attribute__ ((section ("__NOTE,__ELFBoot")))
+#endif
+=
 {
     .hdr0 = {
 	.n_namesz = sizeof(ELF_NOTE_BOOT),

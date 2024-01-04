@@ -16,7 +16,12 @@ struct mbheader {
     unsigned int magic, flags, checksum;
 };
 const struct mbheader multiboot_header
-	__attribute__((section (".hdr"))) =
+#ifndef __APPLE__
+	__attribute__((section (".hdr")))
+#else
+	__attribute__((section ("__HDR,__hdr")))
+#endif
+=
 {
     MULTIBOOT_HEADER_MAGIC,
     MULTIBOOT_HEADER_FLAGS,

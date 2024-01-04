@@ -82,7 +82,9 @@ static __inline__ unsigned int log2(unsigned int word)
 		/* invalid parameter */
 		return -1;
 	}
-	for(; i > word; i >>= 1, pow--) ;
+	for(; i > word; i >>= 1, pow--) {
+    // nop
+  }
 
         return pow;
 }

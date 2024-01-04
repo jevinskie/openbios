@@ -6,6 +6,7 @@
  * the copyright and warranty status of this work.
  */
 
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -48,6 +49,26 @@
 #else
 #define __LFS 0
 #endif
+
+#define _PRIxCELL_TYPE(SIZE) _Generic((SIZE), \
+    char: PRIx8, \
+    short: PRIx16, \
+    int: PRIx32, \
+    long: PRIxLONG, \
+    long long: PRIx64 \
+)
+
+#define PRIxCELL _PRIxCELL_TYPE(typeof(cell))
+
+#define _PRIxUCELL_TYPE(SIZE) _Generic((SIZE), \
+    unsigned char: PRIx8, \
+    unsigned short: PRIx16, \
+    unsigned int: PRIx32, \
+    unsigned long: PRIxLONG, \
+    unsigned long long: PRIx64 \
+)
+
+#define PRIxUCELL _PRIxUCELL_TYPE(typeof(ucell))
 
 /* prototypes */
 static void exit_terminal(void);
@@ -326,10 +347,10 @@ segv_handler(int signo __attribute__ ((unused)),
 	if (PC >= (ucell) dict && PC <= (ucell) dict + dicthead)
 		addr = *(ucell *) PC;
 
-	printk("panic: segmentation violation at %x\n", (ucell)si->si_addr);
-	printk("dict=0x%x here=0x%x(dict+0x%x) pc=0x%x(dict+0x%x)\n",
-	       (ucell)dict, (ucell)dict + dicthead, dicthead, PC, PC - (ucell) dict);
-	printk("dstackcnt=%d rstackcnt=%d instruction=%x\n",
+	printk("panic: segmentation violation at " FMT_ucellx "\n", (ucell)si->si_addr);
+	printk("dict=0x" FMT_ucellx " here=0x" FMT_ucellx "(dict+0x" FMT_ucellx ") pc=0x" FMT_ucellx "(dict+0x" FMT_ucellx ")\n",
+	       (ucell)dict, (ucell)dict + dicthead, (ucell)dicthead, PC, PC - (ucell) dict);
+	printk("dstackcnt=%d rstackcnt=%d instruction=" FMT_ucellx "\n",
 	       dstackcnt, rstackcnt, addr);
 
 #ifdef CONFIG_DEBUG_DSTACK
@@ -568,7 +589,7 @@ int main(int argc, char *argv[])
 			if (optind + 1 != argc)
 				printk("Warning: only first dictionary used.\n");
 
-			printk("dictionary loaded (%d bytes).\n", dicthead);
+			printk("dictionary loaded (" FMT_cell " bytes).\n", dicthead);
 			printk("Initializing memory...");
 		}
 		init_memory();

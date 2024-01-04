@@ -18,6 +18,7 @@
 #include "relocate.h"
 
 void boot(void);
+void collect_sys_info(struct sys_info *info);
 
 #define DICTIONARY_SIZE (256*1024)      /* 256K for the dictionary   */
 static char intdict[DICTIONARY_SIZE];
@@ -35,6 +36,9 @@ static void init_memory(void)
 	PUSH(0x9FFFF);
 }
 
+extern int ob_ide_init(const char *path, uint32_t io_port0, uint32_t ctl_port0,
+                uint32_t io_port1, uint32_t ctl_port1);
+
 static void
 arch_init( void )
 {
@@ -50,7 +54,14 @@ arch_init( void )
 	bind_func("platform-boot", boot );
 }
 
+struct _console_ops {
+    int (*putchar)(int c);
+    int (*availchar)(void);
+    int (*getchar)(void);
+};
 extern struct _console_ops arch_console_ops;
+
+extern void init_console(struct _console_ops ops);
 
 int openbios(void)
 {
@@ -65,7 +76,7 @@ int openbios(void)
 
         collect_sys_info(&sys_info);
 
-	dict=intdict;
+	dict=(unsigned char *)intdict;
 	dictlimit = DICTIONARY_SIZE;
 
 	load_dictionary((char *)sys_info.dict_start,

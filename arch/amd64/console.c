@@ -361,7 +361,7 @@ static unsigned char keyboard_readdata(void)
  *      common functions, implementing simple concurrent console
  * ****************************************************************** */
 
-int arch_putchar(int c)
+static int arch_putchar(int c)
 {
 #ifdef CONFIG_DEBUG_CONSOLE_SERIAL
 	serial_putchar(c);
@@ -372,7 +372,7 @@ int arch_putchar(int c)
 	return c;
 }
 
-int arch_availchar(void)
+static int arch_availchar(void)
 {
 #ifdef CONFIG_DEBUG_CONSOLE_SERIAL
 	if (uart_charav(CONFIG_SERIAL_PORT))
@@ -385,7 +385,7 @@ int arch_availchar(void)
 	return 0;
 }
 
-int arch_getchar(void)
+static int arch_getchar(void)
 {
 #ifdef CONFIG_DEBUG_CONSOLE_SERIAL
 	if (uart_charav(CONFIG_SERIAL_PORT))
@@ -407,6 +407,12 @@ void cls(void)
 	video_cls();
 #endif
 }
+
+struct _console_ops {
+    int (*putchar)(int c);
+    int (*availchar)(void);
+    int (*getchar)(void);
+};
 
 struct _console_ops arch_console_ops = {
 	.putchar = arch_putchar,

@@ -45,7 +45,7 @@ void *malloc(int size)
 	if(memsize>=size) {
 		memsize-=size;
 		ret=memptr;
-		memptr+=size;
+		memptr = (void *)((uintptr_t)memptr + size);
 	}
 	return ret;
 }

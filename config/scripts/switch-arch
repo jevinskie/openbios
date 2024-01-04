@@ -38,7 +38,8 @@ longbits()
     if test "$cpu" = "sparc64" -o "$cpu" = "ia64" \
         -o "$cpu" = "amd64" -o "$cpu" = "x86_64" \
         -o "$cpu" = "powerpc64" -o "$cpu" = "ppc64" \
-        -o "$cpu" = "ppc64le" -o "$cpu" = "alpha" ; then
+        -o "$cpu" = "ppc64le" -o "$cpu" = "alpha" \
+        -o "$cpu" = "arm64" ; then
         echo 64
     else
         echo 32
@@ -100,10 +101,14 @@ crosscflags()
 
 archname()
 {
-    HOSTARCH=`uname -m | sed -e s/i.86/x86/ -e s/i86pc/x86/ \
-	-e s/sun4u/sparc64/ -e s/sparc$/sparc32/ \
-	-e s/arm.*/arm/ -e s/sa110/arm/ -e s/x86_64/amd64/ \
-	-e "s/Power Macintosh/ppc/"`
+    HOSTARCH=`uname -m | perl -pe 's/i.86/x86/; \
+    s/i86pc/x86/; \
+    s/sun4u/sparc64/; \
+    s/sparc$/sparc32/; \
+    s/arm(?!64).*/arm/; \
+    s/sa110/arm/; \
+    s/x86_64/amd64/; \
+    s/Power Macintosh/ppc/'`
 }
 
 select_prefix()

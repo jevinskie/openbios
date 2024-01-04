@@ -16,6 +16,7 @@ clean:
 	done
 
 build: start-build
+	@echo ODIR: $(ODIR) ODIRS: $(ODIRS)
 	@for dir in $(ODIRS); do \
 		$(MAKE) -C $$dir > $$dir/build.log 2>&1 && echo "ok." || \
 		( echo "error:"; tail -15 $$dir/build.log; exit 1 ) \
@@ -42,10 +43,17 @@ run:
 
 
 # The following two targets will only work on x86 so far.
-# 
-$(ODIR)/openbios.iso: $(ODIR)/openbios.multiboot $(ODIR)/openbios-x86.dict
+#
+obj-x86/openbios.iso: $(ODIR)/openbios.multiboot obj-x86/openbios-x86.dict
 	@mkisofs -input-charset UTF-8 -r -b boot/grub/stage2_eltorito -no-emul-boot \
 	-boot-load-size 4 -boot-info-table -o $@ utils/iso $^
 
-runiso: $(ODIR)/openbios.iso
-	qemu -cdrom $^
+obj-amd64/openbios.iso: obj-amd64/openbios.multiboot obj-amd64/openbios-amd64.dict
+	@mkisofs -input-charset UTF-8 -r -b boot/grub/stage2_eltorito -no-emul-boot \
+	-boot-load-size 4 -boot-info-table -o $@ utils/iso $^
+
+runiso-x86: obj-x86/openbios.iso
+	qemu-system-i386 -cdrom $^
+
+runiso-amd64: obj-amd64/openbios.iso
+	qemu-system-x86_64 -cdrom $^

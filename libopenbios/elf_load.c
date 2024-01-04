@@ -369,7 +369,7 @@ elf_readhdrs(int offset, Elf_ehdr *ehdr)
     return phdr;
 }
 
-int 
+int
 elf_load(struct sys_info *info, ihandle_t dev, const char *cmdline, void **boot_notes)
 {
     Elf_ehdr ehdr;
@@ -457,7 +457,7 @@ elf_load(struct sys_info *info, ihandle_t dev, const char *cmdline, void **boot_
     PUSH(file_size);
     feval("load-state >ls.file-size !");
     feval("elf load-state >ls.file-type !");
-    
+
 out:
     close_io(fd);
     if (phdr)
@@ -469,14 +469,14 @@ out:
     return retval;
 }
 
-void 
+void
 elf_init_program(void)
 {
 	char *base;
 	int i;
 	Elf_ehdr *ehdr;
 	Elf_phdr *phdr;
-	size_t size, total_size = 0;
+	size_t size = 0;
 	char *addr;
 	uintptr_t tmp;
 
@@ -518,8 +518,6 @@ elf_init_program(void)
 
 		memcpy(addr, base + phdr[i].p_offset, size);
 
-		total_size += size;
-
 #ifdef CONFIG_PPC
 		flush_icache_range( addr, addr + size );
 #endif
@@ -528,8 +526,8 @@ elf_init_program(void)
 	// Initialise load-state
 	PUSH(ehdr->e_entry);
 	feval("load-state >ls.entry !");
-	
+
 	arch_init_program();
-	
+
 	feval("-1 state-valid !");
 }

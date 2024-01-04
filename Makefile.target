@@ -6,7 +6,7 @@
 include config.mak
 
 ODIR := .
-HOSTCC := gcc
+HOSTCC ?= gcc
 
 HOSTCFLAGS+= -O2 -g -DFCOMPILER -DBOOTSTRAP $(CROSSCFLAGS)
 HOSTCFLAGS+= -Wall -Wredundant-decls -Wshadow -Wpointer-arith
@@ -17,7 +17,7 @@ HOSTCFLAGS+= -W
 HOSTCFLAGS+= -MMD -MP -MT $@ -MF '$(*D)/$(*F).d'
 HOSTINCLUDES := -I$(SRCDIR)/include -I$(SRCDIR)/kernel -I$(SRCDIR)/kernel/include -iquote $(ODIR)/target/include
 
-CC     := $(TARGET)gcc
+CC     ?= $(TARGET)gcc
 AS     := $(TARGET)as
 AR     := $(TARGET)ar
 LD     := $(TARGET)ld

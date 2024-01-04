@@ -23,7 +23,13 @@ void __exit_context(void); /* assembly routine */
  * It is placed at the bottom of our stack, and loaded by assembly routine
  * to start us up.
  */
-struct context main_ctx __attribute__((section (".initctx"))) = {
+struct context main_ctx
+#ifndef __APPLE__
+__attribute__((section (".initctx")))
+#else
+__attribute__((section ("__INITCTX,__initctx")))
+#endif
+= {
     .gdt_base = (uint64_t) gdt,
     .gdt_limit = GDT_LIMIT,
     .cs = FLAT_CS,
@@ -32,14 +38,14 @@ struct context main_ctx __attribute__((section (".initctx"))) = {
     .fs = FLAT_DS,
     .gs = FLAT_DS,
     .ss = FLAT_DS,
-    .esp = (uint32_t) ESP_LOC(&main_ctx),
-    .eip = (uint32_t) start_main,
-    .return_addr = (uint32_t) __exit_context,
+    .esp = (uint32_t)(uintptr_t)ESP_LOC(&main_ctx),
+    .eip = (uint32_t)(uintptr_t)start_main,
+    .return_addr = (uint32_t)(uintptr_t)__exit_context,
 };
 
 /* This is used by assembly routine to load/store the context which
  * it is to switch/switched.  */
-struct context *__context = &main_ctx;
+struct context * volatile __context = &main_ctx;
 
 /* Client program context */
 static struct context *client_ctx;
@@ -97,7 +103,7 @@ arch_init_program(void)
 {
     struct context volatile *ctx = __context;
     ucell type, entry, param;
-    
+
     /* Fill in reasonable default for flat memory model */
     ctx->gdt_base = virt_to_phys(gdt);
     ctx->gdt_limit = GDT_LIMIT;
@@ -109,7 +115,7 @@ arch_init_program(void)
     ctx->ss = FLAT_DS;
     ctx->esp = virt_to_phys(ESP_LOC(ctx));
     ctx->return_addr = virt_to_phys(__exit_context);
-    
+
     /* Set param */
     feval("load-state >ls.param @");
     param = POP();
